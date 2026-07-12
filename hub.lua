@@ -1,5 +1,5 @@
--- DARKS EXPLOIT HUB - THREE TABS VERSION
--- Player, Southwest Florida, San Diego Border Roleplay
+-- DARKS EXPLOIT HUB - FOUR TABS VERSION
+-- Player, Southwest Florida, San Diego Border Roleplay, Brookhaven
 
 local Player = game:GetService("Players").LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -17,7 +17,9 @@ local colors = {
     green = Color3.fromRGB(0, 255, 100),
     red = Color3.fromRGB(255, 50, 50),
     gray = Color3.fromRGB(60, 60, 75),
-    warning = Color3.fromRGB(255, 150, 0)
+    warning = Color3.fromRGB(255, 150, 0),
+    dropdown = Color3.fromRGB(45, 45, 60),
+    dropdownHover = Color3.fromRGB(60, 60, 80)
 }
 
 -- Main GUI
@@ -26,8 +28,8 @@ ScreenGui.Name = "DarksHub"
 ScreenGui.Parent = PlayerGui
 
 local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 400, 0, 480)
-Main.Position = UDim2.new(0.5, -200, 0.5, -240)
+Main.Size = UDim2.new(0, 420, 0, 500)
+Main.Position = UDim2.new(0.5, -210, 0.5, -250)
 Main.BackgroundColor3 = colors.bg
 Main.BorderSizePixel = 0
 Main.Parent = ScreenGui
@@ -88,43 +90,53 @@ UserInputService.InputBegan:Connect(function(input, gp)
     end
 end)
 
--- TABS (Three tabs - each 33.33% width)
+-- TABS (Four tabs - each 25% width)
 local TabBar = Instance.new("Frame")
 TabBar.Size = UDim2.new(1, 0, 0, 35)
 TabBar.Position = UDim2.new(0, 0, 0, 40)
 TabBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 TabBar.Parent = Main
 
--- Tab buttons (3 tabs, each ~33% width)
+-- Tab buttons (4 tabs, each 25% width)
 local PlayerTab = Instance.new("TextButton")
-PlayerTab.Size = UDim2.new(0.333, -2, 1, -4)
+PlayerTab.Size = UDim2.new(0.25, -2, 1, -4)
 PlayerTab.Position = UDim2.new(0, 1, 0, 2)
 PlayerTab.BackgroundColor3 = colors.tabOn
 PlayerTab.Text = "Player"
 PlayerTab.TextColor3 = colors.text
 PlayerTab.Font = Enum.Font.GothamBold
-PlayerTab.TextSize = 12
+PlayerTab.TextSize = 11
 PlayerTab.Parent = TabBar
 
 local SWFTab = Instance.new("TextButton")
-SWFTab.Size = UDim2.new(0.333, -2, 1, -4)
-SWFTab.Position = UDim2.new(0.333, 1, 0, 2)
+SWFTab.Size = UDim2.new(0.25, -2, 1, -4)
+SWFTab.Position = UDim2.new(0.25, 1, 0, 2)
 SWFTab.BackgroundColor3 = colors.tabOff
 SWFTab.Text = "Southwest FL"
 SWFTab.TextColor3 = Color3.fromRGB(180, 180, 200)
 SWFTab.Font = Enum.Font.GothamBold
-SWFTab.TextSize = 12
+SWFTab.TextSize = 10
 SWFTab.Parent = TabBar
 
 local SDBRTab = Instance.new("TextButton")
-SDBRTab.Size = UDim2.new(0.333, -2, 1, -4)
-SDBRTab.Position = UDim2.new(0.666, 1, 0, 2)
+SDBRTab.Size = UDim2.new(0.25, -2, 1, -4)
+SDBRTab.Position = UDim2.new(0.5, 1, 0, 2)
 SDBRTab.BackgroundColor3 = colors.tabOff
 SDBRTab.Text = "San Diego BR"
 SDBRTab.TextColor3 = Color3.fromRGB(180, 180, 200)
 SDBRTab.Font = Enum.Font.GothamBold
-SDBRTab.TextSize = 11
+SDBRTab.TextSize = 10
 SDBRTab.Parent = TabBar
+
+local BrookhavenTab = Instance.new("TextButton")
+BrookhavenTab.Size = UDim2.new(0.25, -2, 1, -4)
+BrookhavenTab.Position = UDim2.new(0.75, 1, 0, 2)
+BrookhavenTab.BackgroundColor3 = colors.tabOff
+BrookhavenTab.Text = "Brookhaven"
+BrookhavenTab.TextColor3 = Color3.fromRGB(180, 180, 200)
+BrookhavenTab.Font = Enum.Font.GothamBold
+BrookhavenTab.TextSize = 11
+BrookhavenTab.Parent = TabBar
 
 -- CONTENT FRAMES
 local PlayerContent = Instance.new("Frame")
@@ -147,11 +159,19 @@ SDBRContent.BackgroundTransparency = 1
 SDBRContent.Visible = false
 SDBRContent.Parent = Main
 
+local BrookhavenContent = Instance.new("Frame")
+BrookhavenContent.Size = UDim2.new(1, -20, 1, -85)
+BrookhavenContent.Position = UDim2.new(0, 10, 0, 80)
+BrookhavenContent.BackgroundTransparency = 1
+BrookhavenContent.Visible = false
+BrookhavenContent.Parent = Main
+
 -- Tab Switching Function
 local function switchTab(tabName)
     PlayerContent.Visible = (tabName == "Player")
     SWFContent.Visible = (tabName == "SWF")
     SDBRContent.Visible = (tabName == "SDBR")
+    BrookhavenContent.Visible = (tabName == "Brookhaven")
     
     PlayerTab.BackgroundColor3 = (tabName == "Player") and colors.tabOn or colors.tabOff
     PlayerTab.TextColor3 = (tabName == "Player") and colors.text or Color3.fromRGB(180, 180, 200)
@@ -161,11 +181,15 @@ local function switchTab(tabName)
     
     SDBRTab.BackgroundColor3 = (tabName == "SDBR") and colors.tabOn or colors.tabOff
     SDBRTab.TextColor3 = (tabName == "SDBR") and colors.text or Color3.fromRGB(180, 180, 200)
+    
+    BrookhavenTab.BackgroundColor3 = (tabName == "Brookhaven") and colors.tabOn or colors.tabOff
+    BrookhavenTab.TextColor3 = (tabName == "Brookhaven") and colors.text or Color3.fromRGB(180, 180, 200)
 end
 
 PlayerTab.MouseButton1Click:Connect(function() switchTab("Player") end)
 SWFTab.MouseButton1Click:Connect(function() switchTab("SWF") end)
 SDBRTab.MouseButton1Click:Connect(function() switchTab("SDBR") end)
+BrookhavenTab.MouseButton1Click:Connect(function() switchTab("Brookhaven") end)
 
 -- HELPER FUNCTIONS
 local function addSection(parent, text, y)
@@ -298,7 +322,6 @@ local function addSlider(parent, text, min, max, default, y, callback)
     return y + 55
 end
 
--- Large Button (for Anti-Cheat Bypass)
 local function addBigButton(parent, text, y, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 50)
@@ -447,20 +470,16 @@ y = addToggle(SWFContent, "Anti-Flip", y, function(state)
     end
 end)
 
--- ================= SAN DIEGO BORDER ROLEPLAY CONTENT =================
+-- ================= SDBR CONTENT =================
 y = 0
 y = addSection(SDBRContent, "Vehicle Mods", y)
 
--- Car Speed for SDBR
 y = addSlider(SDBRContent, "Car Speed", 0, 1000, 50, y, function(v)
-    -- San Diego Border Roleplay specific car speed
     local s = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") and Player.Character:FindFirstChildOfClass("Humanoid").SeatPart
     if s and s:IsA("VehicleSeat") then
         s.MaxSpeed = v
-        -- Alternative methods for different vehicle systems
         local car = s:FindFirstAncestorOfClass("Model")
         if car then
-            -- Try to find vehicle value
             local vehicle = car:FindFirstChild("Vehicle") or car:FindFirstChild("Car")
             if vehicle then
                 local speedValue = vehicle:FindFirstChild("Speed") or vehicle:FindFirstChild("MaxSpeed") or vehicle:FindFirstChild("Velocity")
@@ -468,7 +487,6 @@ y = addSlider(SDBRContent, "Car Speed", 0, 1000, 50, y, function(v)
                     speedValue.Value = v
                 end
             end
-            -- Direct primary part velocity
             local primary = car.PrimaryPart or car:FindFirstChild("Body") or car:FindFirstChild("Chassis") or car:FindFirstChild("Base")
             if primary and primary:IsA("BasePart") then
                 primary.AssemblyLinearVelocity = primary.CFrame.LookVector * v
@@ -477,13 +495,42 @@ y = addSlider(SDBRContent, "Car Speed", 0, 1000, 50, y, function(v)
     end
 end)
 
--- Anti-Cheat Bypass Button
+y = addToggle(SDBRContent, "Car Fly", y, function(state)
+    if state then
+        _G.cf = RunService.Heartbeat:Connect(function()
+            local s = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") and Player.Character:FindFirstChildOfClass("Humanoid").SeatPart
+            if not s then return end
+            local c = s:FindFirstAncestorOfClass("Model")
+            if not c then return end
+            local p = c.PrimaryPart or c:FindFirstChild("Body") or c:FindFirstChild("Chassis")
+            if not p then return end
+            p.CanCollide = false
+            local d = Vector3.new()
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then d = d + Vector3.new(0, 0, -1) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then d = d + Vector3.new(0, 0, 1) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then d = d + Vector3.new(-1, 0, 0) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then d = d + Vector3.new(1, 0, 0) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.new(0, 1, 0) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then d = d + Vector3.new(0, -1, 0) end
+            if d.Magnitude > 0 then p.CFrame = p.CFrame + d.Unit * 5 end
+        end)
+    else
+        if _G.cf then _G.cf:Disconnect() _G.cf = nil end
+        local s = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") and Player.Character:FindFirstChildOfClass("Humanoid").SeatPart
+        if s then
+            local c = s:FindFirstAncestorOfClass("Model")
+            if c then
+                local p = c.PrimaryPart or c:FindFirstChild("Body") or c:FindFirstChild("Chassis")
+                if p then p.CanCollide = true end
+            end
+        end
+    end
+end)
+
 y = addSection(SDBRContent, "Security", y)
 y = addBigButton(SDBRContent, "ANTI-CHEAT BYPASS", y, function()
-    -- Anti-cheat bypass methods
     print("Attempting Anti-Cheat Bypass...")
     
-    -- Method 1: Disable common anti-cheat detections
     local mt = getrawmetatable and getrawmetatable(game)
     if mt and setreadonly then
         setreadonly(mt, false)
@@ -499,19 +546,14 @@ y = addBigButton(SDBRContent, "ANTI-CHEAT BYPASS", y, function()
         setreadonly(mt, true)
     end
     
-    -- Method 2: Hook detection functions
     if hookfunction then
-        -- Hook common detection functions
-        local oldNamecall
-        oldNamecall = hookfunction(game.Players.LocalPlayer.Kick, function() 
+        local oldNamecall = hookfunction(game.Players.LocalPlayer.Kick, function() 
             print("Kick blocked")
         end)
     end
     
-    -- Method 3: Disable client-side checks
     local rs = game:GetService("RunService")
     if rs then
-        -- Clear any detection loops
         for _, conn in pairs(getconnections and getconnections(rs.Heartbeat) or {}) do
             if conn and conn.Function then
                 local info = debug and debug.getinfo(conn.Function)
@@ -523,23 +565,19 @@ y = addBigButton(SDBRContent, "ANTI-CHEAT BYPASS", y, function()
         end
     end
     
-    -- Method 4: Spoof values
     local char = Player.Character
     if char then
-        -- Spoof position to prevent teleport detection
         local hrp = char:FindFirstChild("HumanoidRootPart")
         if hrp then
             local lastPos = hrp.Position
             game:GetService("RunService").Heartbeat:Connect(function()
                 if hrp and (hrp.Position - lastPos).Magnitude > 100 then
-                    -- Teleport detected, spoof back
                     lastPos = hrp.Position
                 end
             end)
         end
     end
     
-    -- Visual feedback
     local notif = Instance.new("TextLabel")
     notif.Size = UDim2.new(0, 200, 0, 50)
     notif.Position = UDim2.new(0.5, -100, 0.5, -25)
@@ -554,7 +592,6 @@ y = addBigButton(SDBRContent, "ANTI-CHEAT BYPASS", y, function()
     print("Anti-Cheat Bypass Complete!")
 end)
 
--- Additional SDBR features
 y = addToggle(SDBRContent, "Auto Drive", y, function(state)
     if state then
         _G.ad = RunService.Heartbeat:Connect(function()
@@ -564,7 +601,6 @@ y = addToggle(SDBRContent, "Auto Drive", y, function(state)
             if not c then return end
             local p = c.PrimaryPart or c:FindFirstChild("Body") or c:FindFirstChild("Chassis")
             if not p then return end
-            -- Auto drive forward
             p.CFrame = p.CFrame + p.CFrame.LookVector * 2
         end)
     else
@@ -573,7 +609,6 @@ y = addToggle(SDBRContent, "Auto Drive", y, function(state)
 end)
 
 y = addToggle(SDBRContent, "No Tire Damage", y, function(state)
-    -- Prevent tire popping
     local s = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") and Player.Character:FindFirstChildOfClass("Humanoid").SeatPart
     if not s then return end
     local c = s:FindFirstAncestorOfClass("Model")
@@ -591,6 +626,268 @@ y = addToggle(SDBRContent, "No Tire Damage", y, function(state)
     end
 end)
 
-print("Darks Exploit Hub - Three Tabs Loaded!")
-print("Player | Southwest Florida | San Diego Border Roleplay")
+-- ================= BROOKHAVEN CONTENT =================
+y = 0
+y = addSection(BrookhavenContent, "Teleport", y)
+
+-- Selected player variable
+_G.selectedPlayer = nil
+
+-- Dropdown Frame
+local dropdownFrame = Instance.new("Frame")
+dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+dropdownFrame.Position = UDim2.new(0, 0, 0, y)
+dropdownFrame.BackgroundColor3 = colors.dropdown
+dropdownFrame.BorderSizePixel = 0
+dropdownFrame.Parent = BrookhavenContent
+
+-- Dropdown Button (shows current selection)
+local dropdownBtn = Instance.new("TextButton")
+dropdownBtn.Size = UDim2.new(1, 0, 1, 0)
+dropdownBtn.BackgroundColor3 = colors.dropdown
+dropdownBtn.Text = "  Select Player ▼"
+dropdownBtn.TextColor3 = colors.text
+dropdownBtn.Font = Enum.Font.Gotham
+dropdownBtn.TextSize = 14
+dropdownBtn.TextXAlignment = Enum.TextXAlignment.Left
+dropdownBtn.Parent = dropdownFrame
+
+-- Dropdown List (scrollable)
+local dropdownList = Instance.new("Frame")
+dropdownList.Size = UDim2.new(1, 0, 0, 150)
+dropdownList.Position = UDim2.new(0, 0, 1, 0)
+dropdownList.BackgroundColor3 = colors.dropdown
+dropdownList.BorderSizePixel = 0
+dropdownList.Visible = false
+dropdownList.ZIndex = 10
+dropdownList.Parent = dropdownFrame
+
+-- Scrolling frame for player list
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -10, 1, -10)
+scrollFrame.Position = UDim2.new(0, 5, 0, 5)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.ScrollBarThickness = 5
+scrollFrame.ScrollBarImageColor3 = colors.accent
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ZIndex = 11
+scrollFrame.Parent = dropdownList
+
+-- Function to update player list
+local function updatePlayerList()
+    -- Clear existing
+    for _, child in pairs(scrollFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    local yOffset = 0
+    local players = game:GetService("Players"):GetPlayers()
+    
+    for _, plr in ipairs(players) do
+        if plr ~= Player then
+            local playerBtn = Instance.new("TextButton")
+            playerBtn.Size = UDim2.new(1, 0, 0, 30)
+            playerBtn.Position = UDim2.new(0, 0, 0, yOffset)
+            playerBtn.BackgroundColor3 = colors.dropdown
+            playerBtn.Text = plr.Name
+            playerBtn.TextColor3 = colors.text
+            playerBtn.Font = Enum.Font.Gotham
+            playerBtn.TextSize = 13
+            playerBtn.ZIndex = 12
+            playerBtn.Parent = scrollFrame
+            
+            playerBtn.MouseEnter:Connect(function()
+                playerBtn.BackgroundColor3 = colors.dropdownHover
+            end)
+            
+            playerBtn.MouseLeave:Connect(function()
+                playerBtn.BackgroundColor3 = colors.dropdown
+            end)
+            
+            playerBtn.MouseButton1Click:Connect(function()
+                _G.selectedPlayer = plr
+                dropdownBtn.Text = "  " .. plr.Name .. " ▼"
+                dropdownList.Visible = false
+            end)
+            
+            yOffset = yOffset + 32
+        end
+    end
+    
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
+end
+
+-- Toggle dropdown
+dropdownBtn.MouseButton1Click:Connect(function()
+    dropdownList.Visible = not dropdownList.Visible
+    if dropdownList.Visible then
+        updatePlayerList()
+        dropdownBtn.Text = dropdownBtn.Text:gsub("▼", "▲")
+    else
+        dropdownBtn.Text = dropdownBtn.Text:gsub("▲", "▼")
+    end
+end)
+
+-- Close dropdown when clicking elsewhere
+UserInputService.InputBegan:Connect(function(input, gp)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 and not gp then
+        local mousePos = input.Position
+        local dropdownAbs = dropdownList.AbsolutePosition
+        local dropdownSize = dropdownList.AbsoluteSize
+        
+        -- Check if click is outside dropdown
+        if mousePos.X < dropdownAbs.X or mousePos.X > dropdownAbs.X + dropdownSize.X or
+           mousePos.Y < dropdownAbs.Y or mousePos.Y > dropdownAbs.Y + dropdownSize.Y then
+            if dropdownList.Visible and not dropdownBtn:IsDescendantOf(game:GetService("GuiService"):GetGuiInset()) then
+                -- Check if clicked on dropdown button
+                local btnAbs = dropdownBtn.AbsolutePosition
+                local btnSize = dropdownBtn.AbsoluteSize
+                if mousePos.X < btnAbs.X or mousePos.X > btnAbs.X + btnSize.X or
+                   mousePos.Y < btnAbs.Y or mousePos.Y > btnAbs.Y + btnSize.Y then
+                    dropdownList.Visible = false
+                    dropdownBtn.Text = dropdownBtn.Text:gsub("▲", "▼")
+                end
+            end
+        end
+    end
+end)
+
+y = y + 60
+
+-- Teleport Button
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(1, 0, 0, 50)
+teleportBtn.Position = UDim2.new(0, 0, 0, y)
+teleportBtn.BackgroundColor3 = colors.accent
+teleportBtn.Text = "TELEPORT TO PLAYER"
+teleportBtn.TextColor3 = colors.text
+teleportBtn.Font = Enum.Font.GothamBold
+teleportBtn.TextSize = 16
+teleportBtn.Parent = BrookhavenContent
+
+teleportBtn.MouseButton1Click:Connect(function()
+    if _G.selectedPlayer and _G.selectedPlayer.Character then
+        local targetHRP = _G.selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local myHRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+        
+        if targetHRP and myHRP then
+            myHRP.CFrame = targetHRP.CFrame + Vector3.new(0, 3, 0)
+            print("Teleported to: " .. _G.selectedPlayer.Name)
+            
+            -- Visual feedback
+            local notif = Instance.new("TextLabel")
+            notif.Size = UDim2.new(0, 250, 0, 40)
+            notif.Position = UDim2.new(0.5, -125, 0.5, -20)
+            notif.BackgroundColor3 = colors.green
+            notif.Text = "Teleported to " .. _G.selectedPlayer.Name
+            notif.TextColor3 = colors.text
+            notif.Font = Enum.Font.GothamBold
+            notif.TextSize = 14
+            notif.Parent = ScreenGui
+            game:GetService("Debris"):AddItem(notif, 2)
+        else
+            print("Player or target not found")
+        end
+    else
+        print("No player selected")
+        
+        -- Error feedback
+        local notif = Instance.new("TextLabel")
+        notif.Size = UDim2.new(0, 200, 0, 40)
+        notif.Position = UDim2.new(0.5, -100, 0.5, -20)
+        notif.BackgroundColor3 = colors.red
+        notif.Text = "Select a player first!"
+        notif.TextColor3 = colors.text
+        notif.Font = Enum.Font.GothamBold
+        notif.TextSize = 14
+        notif.Parent = ScreenGui
+        game:GetService("Debris"):AddItem(notif, 2)
+    end
+end)
+
+y = y + 70
+
+-- Auto-update player list when players join/leave
+game:GetService("Players").PlayerAdded:Connect(function()
+    if dropdownList.Visible then
+        updatePlayerList()
+    end
+end)
+
+game:GetService("Players").PlayerRemoving:Connect(function()
+    if dropdownList.Visible then
+        updatePlayerList()
+    end
+    -- Clear selection if selected player left
+    if _G.selectedPlayer and not _G.selectedPlayer.Parent then
+        _G.selectedPlayer = nil
+        dropdownBtn.Text = "  Select Player ▼"
+    end
+end)
+
+-- Additional Brookhaven features
+y = addSection(BrookhavenContent, "House", y)
+
+y = addToggle(BrookhavenContent, "Unlock All Doors", y, function(state)
+    -- Unlock all doors in Brookhaven
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name:lower():find("door") and obj:IsA("BasePart") or obj:IsA("Model") then
+            local door = obj:FindFirstChildOfClass("ClickDetector") or obj:FindFirstChild("ClickDetector")
+            if door then
+                door.MaxActivationDistance = state and 1000 or 10
+            end
+            -- Unlock door properties
+            if obj:IsA("BasePart") then
+                obj.CanCollide = not state
+            end
+        end
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Auto Rob", y, function(state)
+    if state then
+        _G.autorob = RunService.Heartbeat:Connect(function()
+            -- Auto collect money/items
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name:lower():find("money") or obj.Name:lower():find("cash") or obj.Name:lower():find("collect") then
+                    if obj:IsA("BasePart") and obj:FindFirstChildOfClass("TouchTransmitter") then
+                        firetouchinterest(Player.Character and Player.Character:FindFirstChild("HumanoidRootPart"), obj, 0)
+                        firetouchinterest(Player.Character and Player.Character:FindFirstChild("HumanoidRootPart"), obj, 1)
+                    end
+                end
+            end
+        end)
+    else
+        if _G.autorob then _G.autorob:Disconnect() _G.autorob = nil end
+    end
+end)
+
+y = addSection(BrookhavenContent, "Fun", y)
+
+y = addToggle(BrookhavenContent, "Invisible", y, function(state)
+    local char = Player.Character
+    if not char then return end
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+            part.Transparency = state and 1 or 0
+        end
+    end
+end)
+
+y = addSlider(BrookhavenContent, "Player Size", 0.5, 5, 1, y, function(v)
+    local char = Player.Character
+    if not char then return end
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Size = part.Size * (v / (_G.lastSize or 1))
+        end
+    end
+    _G.lastSize = v
+end)
+
+print("Darks Exploit Hub - Four Tabs Loaded!")
+print("Player | Southwest FL | San Diego BR | Brookhaven")
+print("Brookhaven features: Player Teleport, Unlock Doors, Auto Rob, Invisible, Size Changer")
 print("Press 'K' to hide/show GUI")
