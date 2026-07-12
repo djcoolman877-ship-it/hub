@@ -1,4 +1,4 @@
--- DARKS EXPLOIT HUB - FOUR TABS VERSION WITH KILL ALL
+-- DARKS EXPLOIT HUB - COMPLETE VERSION WITH KILL ALL
 -- Player, Southwest Florida, San Diego Border Roleplay, Brookhaven
 
 local Player = game:GetService("Players").LocalPlayer
@@ -21,7 +21,8 @@ local colors = {
     dropdown = Color3.fromRGB(45, 45, 60),
     dropdownHover = Color3.fromRGB(60, 60, 80),
     gold = Color3.fromRGB(255, 215, 0),
-    darkRed = Color3.fromRGB(150, 0, 0)
+    darkRed = Color3.fromRGB(150, 0, 0),
+    blood = Color3.fromRGB(200, 0, 0)
 }
 
 -- Main GUI
@@ -92,14 +93,13 @@ UserInputService.InputBegan:Connect(function(input, gp)
     end
 end)
 
--- TABS (Four tabs - each 25% width)
+-- TABS (Four tabs)
 local TabBar = Instance.new("Frame")
 TabBar.Size = UDim2.new(1, 0, 0, 35)
 TabBar.Position = UDim2.new(0, 0, 0, 40)
 TabBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 TabBar.Parent = Main
 
--- Tab buttons
 local PlayerTab = Instance.new("TextButton")
 PlayerTab.Size = UDim2.new(0.25, -2, 1, -4)
 PlayerTab.Position = UDim2.new(0, 1, 0, 2)
@@ -612,4 +612,494 @@ end)
 
 y = addToggle(SDBRContent, "No Tire Damage", y, function(state)
     local s = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") and Player.Character:FindFirstChildOfClass("Humanoid").SeatPart
-    if not s then return
+    if not s then return end
+    local c = s:FindFirstAncestorOfClass("Model")
+    if not c then return end
+    for _, part in pairs(c:GetDescendants()) do
+        if part.Name:lower():find("tire") or part.Name:lower():find("wheel") then
+            if state then
+                part.CanTouch = false
+                part.CanQuery = false
+            else
+                part.CanTouch = true
+                part.CanQuery = true
+            end
+        end
+    end
+end)
+
+-- ================= BROOKHAVEN CONTENT =================
+y = 0
+
+-- KILL ALL SECTION
+y = addSection(BrookhavenContent, "Combat", y)
+
+-- KILL ALL BUTTON
+y = addBigButton(BrookhavenContent, "KILL ALL PLAYERS", y, colors.blood, function()
+    print("Killing all players...")
+    
+    local killedCount = 0
+    
+    -- Method 1: Break joints (most reliable)
+    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
+        if target ~= Player and target.Character then
+            -- Break joints to kill
+            local success = pcall(function()
+                target.Character:BreakJoints()
+            end)
+            if success then
+                killedCount = killedCount + 1
+            end
+            
+            -- Also try to set health to 0
+            local hum = target.Character:FindFirstChildOfClass("Humanoid")
+            if hum then
+                pcall(function()
+                    hum.Health = 0
+                end)
+            end
+            
+            -- Try to destroy head
+            local head = target.Character:FindFirstChild("Head")
+            if head then
+                pcall(function()
+                    head:Destroy()
+                end)
+            end
+        end
+    end
+    
+    -- Method 2: Use remotes if available
+    local rs = game:GetService("ReplicatedStorage")
+    local remotes = rs:FindFirstChild("Remotes") or rs:FindFirstChild("RemoteEvents") or rs:FindFirstChild("Events")
+    if remotes then
+        for _, remote in pairs(remotes:GetDescendants()) do
+            if remote:IsA("RemoteEvent") then
+                if remote.Name:lower():find("kill") or remote.Name:lower():find("damage") or remote.Name:lower():find("hurt") then
+                    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
+                        if target ~= Player then
+                            pcall(function()
+                                remote:FireServer(target, 999999)
+                            end)
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    -- Method 3: Brookhaven specific - use damage remote
+    local bhRemotes = rs:FindFirstChild("Brookhaven") or rs:FindFirstChild("BH")
+    if bhRemotes then
+        local damageRemote = bhRemotes:FindFirstChild("Damage") or bhRemotes:FindFirstChild("TakeDamage") or bhRemotes:FindFirstChild("Hurt")
+        if damageRemote and damageRemote:IsA("RemoteEvent") then
+            for _, target in pairs(game:GetService("Players"):GetPlayers()) do
+                if target ~= Player then
+                    pcall(function()
+                        damageRemote:FireServer(target.Character, 999999)
+                    end)
+                end
+            end
+        end
+    end
+    
+    -- Method 4: Teleport them to void
+    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
+        if target ~= Player and target.Character then
+            local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                pcall(function()
+                    hrp.CFrame = CFrame.new(0, -10000, 0)
+                end)
+            end
+        end
+    end
+    
+    -- Visual feedback
+    local notif = Instance.new("TextLabel")
+    notif.Size = UDim2.new(0, 300, 0, 60)
+    notif.Position = UDim2.new(0.5, -150, 0.5, -30)
+    notif.BackgroundColor3 = colors.blood
+    notif.Text = "KILLED " .. killedCount .. " PLAYERS!"
+    notif.TextColor3 = colors.text
+    notif.Font = Enum.Font.GothamBold
+    notif.TextSize = 20
+    notif.Parent = ScreenGui
+    game:GetService("Debris"):AddItem(notif, 3)
+    
+    print("Kill All complete! Killed " .. killedCount .. " players.")
+end)
+
+-- Kill Aura Toggle
+y = addToggle(BrookhavenContent, "Kill Aura (Auto Kill Near)", y, function(state)
+    if state then
+        _G.ka = RunService.Heartbeat:Connect(function()
+            local myChar = Player.Character
+            if not myChar then return end
+            local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+            if not myHRP then return end
+            
+            for _, target in pairs(game:GetService("Players"):GetPlayers()) do
+                if target ~= Player and target.Character then
+                    local theirHRP = target.Character:FindFirstChild("HumanoidRootPart")
+                    if theirHRP then
+                        local distance = (myHRP.Position - theirHRP.Position).Magnitude
+                        if distance < 20 then -- Within 20 studs
+                            -- Kill them
+                            pcall(function()
+                                target.Character:BreakJoints()
+                            end)
+                            local hum = target.Character:FindFirstChildOfClass("Humanoid")
+                            if hum then
+                                pcall(function()
+                                    hum.Health = 0
+                                end)
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    else
+        if _G.ka then _G.ka:Disconnect() _G.ka = nil end
+    end
+end)
+
+-- GAMEPASSES SECTION
+y = addSection(BrookhavenContent, "Gamepasses", y)
+
+y = addBigButton(BrookhavenContent, "UNLOCK ALL GAMEPASSES", y, colors.gold, function()
+    print("Unlocking all gamepasses...")
+    
+    local gamepasses = {
+        "Premium", "VIP", "Admin", "HouseSlots", "ExtraCars", "SuperAdmin",
+        "Police", "Firefighter", "Mayor", "GodMode", "Fly", "Noclip",
+        "Invisible", "Speed", "JumpPower", "UnlimitedMoney", "AllHouses",
+        "AllCars", "AllItems", "AllPets", "AllTools", "AllWeapons"
+    }
+    
+    local successCount = 0
+    
+    for _, gpName in ipairs(gamepasses) do
+        local gp = Player:FindFirstChild(gpName) or Player:FindFirstChild("Has" .. gpName) or Player:FindFirstChild("Owns" .. gpName)
+        if gp then
+            if gp:IsA("BoolValue") then
+                gp.Value = true
+                successCount = successCount + 1
+            elseif gp:IsA("IntValue") or gp:IsA("NumberValue") then
+                gp.Value = 1
+                successCount = successCount + 1
+            end
+        end
+    end
+    
+    local stats = Player:FindFirstChild("Stats") or Player:FindFirstChild("Data") or Player:FindFirstChild("leaderstats")
+    if stats then
+        for _, gpName in ipairs(gamepasses) do
+            local gp = stats:FindFirstChild(gpName) or stats:FindFirstChild("Has" .. gpName) or stats:FindFirstChild("Owns" .. gpName)
+            if gp then
+                if gp:IsA("BoolValue") then
+                    gp.Value = true
+                    successCount = successCount + 1
+                elseif gp:IsA("IntValue") or gp:IsA("NumberValue") then
+                    gp.Value = 1
+                    successCount = successCount + 1
+                end
+            end
+        end
+    end
+    
+    local MarketService = game:GetService("MarketplaceService")
+    if MarketService and hookfunction then
+        local oldFunc = hookfunction(MarketService.PlayerOwnsGamePassAsync, function()
+            return true
+        end)
+    end
+    
+    local folder = Instance.new("Folder")
+    folder.Name = "UnlockedGamepasses"
+    folder.Parent = Player
+    
+    for _, gpName in ipairs(gamepasses) do
+        local bool = Instance.new("BoolValue")
+        bool.Name = gpName
+        bool.Value = true
+        bool.Parent = folder
+    end
+    
+    local notif = Instance.new("TextLabel")
+    notif.Size = UDim2.new(0, 300, 0, 60)
+    notif.Position = UDim2.new(0.5, -150, 0.5, -30)
+    notif.BackgroundColor3 = colors.gold
+    notif.Text = "ALL GAMEPASSES UNLOCKED!\n(" .. successCount .. " found)"
+    notif.TextColor3 = colors.text
+    notif.Font = Enum.Font.GothamBold
+    notif.TextSize = 16
+    notif.Parent = ScreenGui
+    game:GetService("Debris"):AddItem(notif, 3)
+    
+    print("Gamepass unlock complete!")
+end)
+
+-- Individual Gamepass Toggles
+y = addToggle(BrookhavenContent, "Premium", y, function(state)
+    local gp = Player:FindFirstChild("Premium") or Player:FindFirstChild("HasPremium")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "Premium"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "VIP", y, function(state)
+    local gp = Player:FindFirstChild("VIP") or Player:FindFirstChild("HasVIP")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "VIP"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Admin", y, function(state)
+    local gp = Player:FindFirstChild("Admin") or Player:FindFirstChild("HasAdmin")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "Admin"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+-- TELEPORT SECTION
+y = addSection(BrookhavenContent, "Teleport", y)
+
+_G.selectedPlayer = nil
+
+local dropdownFrame = Instance.new("Frame")
+dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+dropdownFrame.Position = UDim2.new(0, 0, 0, y)
+dropdownFrame.BackgroundColor3 = colors.dropdown
+dropdownFrame.BorderSizePixel = 0
+dropdownFrame.Parent = BrookhavenContent
+
+local dropdownBtn = Instance.new("TextButton")
+dropdownBtn.Size = UDim2.new(1, 0, 1, 0)
+dropdownBtn.BackgroundColor3 = colors.dropdown
+dropdownBtn.Text = "  Select Player ▼"
+dropdownBtn.TextColor3 = colors.text
+dropdownBtn.Font = Enum.Font.Gotham
+dropdownBtn.TextSize = 14
+dropdownBtn.TextXAlignment = Enum.TextXAlignment.Left
+dropdownBtn.Parent = dropdownFrame
+
+local dropdownList = Instance.new("Frame")
+dropdownList.Size = UDim2.new(1, 0, 0, 150)
+dropdownList.Position = UDim2.new(0, 0, 1, 0)
+dropdownList.BackgroundColor3 = colors.dropdown
+dropdownList.BorderSizePixel = 0
+dropdownList.Visible = false
+dropdownList.ZIndex = 10
+dropdownList.Parent = dropdownFrame
+
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -10, 1, -10)
+scrollFrame.Position = UDim2.new(0, 5, 0, 5)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.ScrollBarThickness = 5
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ZIndex = 11
+scrollFrame.Parent = dropdownList
+
+local function updatePlayerList()
+    for _, child in pairs(scrollFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    local yOffset = 0
+    local players = game:GetService("Players"):GetPlayers()
+    
+    for _, plr in ipairs(players) do
+        if plr ~= Player then
+            local playerBtn = Instance.new("TextButton")
+            playerBtn.Size = UDim2.new(1, 0, 0, 30)
+            playerBtn.Position = UDim2.new(0, 0, 0, yOffset)
+            playerBtn.BackgroundColor3 = colors.dropdown
+            playerBtn.Text = plr.Name
+            playerBtn.TextColor3 = colors.text
+            playerBtn.Font = Enum.Font.Gotham
+            playerBtn.TextSize = 13
+            playerBtn.ZIndex = 12
+            playerBtn.Parent = scrollFrame
+            
+            playerBtn.MouseEnter:Connect(function()
+                playerBtn.BackgroundColor3 = colors.dropdownHover
+            end)
+            
+            playerBtn.MouseLeave:Connect(function()
+                playerBtn.BackgroundColor3 = colors.dropdown
+            end)
+            
+            playerBtn.MouseButton1Click:Connect(function()
+                _G.selectedPlayer = plr
+                dropdownBtn.Text = "  " .. plr.Name .. " ▼"
+                dropdownList.Visible = false
+            end)
+            
+            yOffset = yOffset + 32
+        end
+    end
+    
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
+end
+
+dropdownBtn.MouseButton1Click:Connect(function()
+    dropdownList.Visible = not dropdownList.Visible
+    if dropdownList.Visible then
+        updatePlayerList()
+        dropdownBtn.Text = dropdownBtn.Text:gsub("▼", "▲")
+    else
+        dropdownBtn.Text = dropdownBtn.Text:gsub("▲", "▼")
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input, gp)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 and not gp then
+        local mousePos = input.Position
+        local dropdownAbs = dropdownList.AbsolutePosition
+        local dropdownSize = dropdownList.AbsoluteSize
+        
+        if mousePos.X < dropdownAbs.X or mousePos.X > dropdownAbs.X + dropdownSize.X or
+           mousePos.Y < dropdownAbs.Y or mousePos.Y > dropdownAbs.Y + dropdownSize.Y then
+            if dropdownList.Visible then
+                local btnAbs = dropdownBtn.AbsolutePosition
+                local btnSize = dropdownBtn.AbsoluteSize
+                if mousePos.X < btnAbs.X or mousePos.X > btnAbs.X + btnSize.X or
+                   mousePos.Y < btnAbs.Y or mousePos.Y > btnAbs.Y + btnSize.Y then
+                    dropdownList.Visible = false
+                    dropdownBtn.Text = dropdownBtn.Text:gsub("▲", "▼")
+                end
+            end
+        end
+    end
+end)
+
+y = y + 60
+
+y = addBigButton(BrookhavenContent, "TELEPORT TO PLAYER", y, colors.accent, function()
+    if _G.selectedPlayer and _G.selectedPlayer.Character then
+        local targetHRP = _G.selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local myHRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+        
+        if targetHRP and myHRP then
+            myHRP.CFrame = targetHRP.CFrame + Vector3.new(0, 3, 0)
+            
+            local notif = Instance.new("TextLabel")
+            notif.Size = UDim2.new(0, 250, 0, 40)
+            notif.Position = UDim2.new(0.5, -125, 0.5, -20)
+            notif.BackgroundColor3 = colors.green
+            notif.Text = "Teleported to " .. _G.selectedPlayer.Name
+            notif.TextColor3 = colors.text
+            notif.Font = Enum.Font.GothamBold
+            notif.TextSize = 14
+            notif.Parent = ScreenGui
+            game:GetService("Debris"):AddItem(notif, 2)
+        end
+    else
+        local notif = Instance.new("TextLabel")
+        notif.Size = UDim2.new(0, 200, 0, 40)
+        notif.Position = UDim2.new(0.5, -100, 0.5, -20)
+        notif.BackgroundColor3 = colors.red
+        notif.Text = "Select a player first!"
+        notif.TextColor3 = colors.text
+        notif.Font = Enum.Font.GothamBold
+        notif.TextSize = 14
+        notif.Parent = ScreenGui
+        game:GetService("Debris"):AddItem(notif, 2)
+    end
+end)
+
+-- Auto-update player list
+game:GetService("Players").PlayerAdded:Connect(function()
+    if dropdownList.Visible then
+        updatePlayerList()
+    end
+end)
+
+game:GetService("Players").PlayerRemoving:Connect(function()
+    if dropdownList.Visible then
+        updatePlayerList()
+    end
+    if _G.selectedPlayer and not _G.selectedPlayer.Parent then
+        _G.selectedPlayer = nil
+        dropdownBtn.Text = "  Select Player ▼"
+    end
+end)
+
+-- HOUSE SECTION
+y = addSection(BrookhavenContent, "House", y)
+
+y = addToggle(BrookhavenContent, "Unlock All Doors", y, function(state)
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name:lower():find("door") and (obj:IsA("BasePart") or obj:IsA("Model")) then
+            local door = obj:FindFirstChildOfClass("ClickDetector") or obj:FindFirstChild("ClickDetector")
+            if door then
+                door.MaxActivationDistance = state and 1000 or 10
+            end
+            if obj:IsA("BasePart") then
+                obj.CanCollide = not state
+            end
+        end
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Auto Rob", y, function(state)
+    if state then
+        _G.autorob = RunService.Heartbeat:Connect(function()
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name:lower():find("money") or obj.Name:lower():find("cash") or obj.Name:lower():find("collect") then
+                    if obj:IsA("BasePart") and obj:FindFirstChildOfClass("TouchTransmitter") then
+                        firetouchinterest(Player.Character and Player.Character:FindFirstChild("HumanoidRootPart"), obj, 0)
+                        firetouchinterest(Player.Character and Player.Character:FindFirstChild("HumanoidRootPart"), obj, 1)
+                    end
+                end
+            end
+        end)
+    else
+        if _G.autorob then _G.autorob:Disconnect() _G.autorob = nil end
+    end
+end)
+
+-- FUN SECTION
+y = addSection(BrookhavenContent, "Fun", y)
+
+y = addToggle(BrookhavenContent, "Invisible", y, function(state)
+    local char = Player.Character
+    if not char then return end
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+            part.Transparency = state and 1 or 0
+        end
+    end
+end)
+
+y = addSlider(BrookhavenContent, "Player Size", 0.5, 5, 1, y, function(v)
+    local char = Player.Character
+    if not char then return end
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Size = part.Size * (v / (_G.lastSize or 1))
+        end
+    end
+    _G.lastSize = v
+end)
+
+print("Darks Exploit Hub - FULL VERSION WITH KILL ALL LOADED!")
+print("Features: Kill All, Kill Aura, Gamepasses, Teleport, and more!")
+print("Press 'K' to hide/show GUI")
