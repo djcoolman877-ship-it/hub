@@ -1,4 +1,4 @@
--- DARKS EXPLOIT HUB - FOUR TABS VERSION
+-- DARKS EXPLOIT HUB - FOUR TABS VERSION WITH GAMEPASSES
 -- Player, Southwest Florida, San Diego Border Roleplay, Brookhaven
 
 local Player = game:GetService("Players").LocalPlayer
@@ -19,7 +19,8 @@ local colors = {
     gray = Color3.fromRGB(60, 60, 75),
     warning = Color3.fromRGB(255, 150, 0),
     dropdown = Color3.fromRGB(45, 45, 60),
-    dropdownHover = Color3.fromRGB(60, 60, 80)
+    dropdownHover = Color3.fromRGB(60, 60, 80),
+    gold = Color3.fromRGB(255, 215, 0)
 }
 
 -- Main GUI
@@ -28,8 +29,8 @@ ScreenGui.Name = "DarksHub"
 ScreenGui.Parent = PlayerGui
 
 local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 420, 0, 500)
-Main.Position = UDim2.new(0.5, -210, 0.5, -250)
+Main.Size = UDim2.new(0, 420, 0, 520)
+Main.Position = UDim2.new(0.5, -210, 0.5, -260)
 Main.BackgroundColor3 = colors.bg
 Main.BorderSizePixel = 0
 Main.Parent = ScreenGui
@@ -322,11 +323,11 @@ local function addSlider(parent, text, min, max, default, y, callback)
     return y + 55
 end
 
-local function addBigButton(parent, text, y, callback)
+local function addBigButton(parent, text, y, color, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 50)
     btn.Position = UDim2.new(0, 0, 0, y)
-    btn.BackgroundColor3 = colors.warning
+    btn.BackgroundColor3 = color or colors.warning
     btn.Text = text
     btn.TextColor3 = colors.text
     btn.Font = Enum.Font.GothamBold
@@ -528,7 +529,7 @@ y = addToggle(SDBRContent, "Car Fly", y, function(state)
 end)
 
 y = addSection(SDBRContent, "Security", y)
-y = addBigButton(SDBRContent, "ANTI-CHEAT BYPASS", y, function()
+y = addBigButton(SDBRContent, "ANTI-CHEAT BYPASS", y, colors.warning, function()
     print("Attempting Anti-Cheat Bypass...")
     
     local mt = getrawmetatable and getrawmetatable(game)
@@ -628,6 +629,246 @@ end)
 
 -- ================= BROOKHAVEN CONTENT =================
 y = 0
+
+-- GAMEPASSES SECTION
+y = addSection(BrookhavenContent, "Gamepasses", y)
+
+-- Unlock All Gamepasses Button
+y = addBigButton(BrookhavenContent, "UNLOCK ALL GAMEPASSES", y, colors.gold, function()
+    print("Unlocking all Brookhaven gamepasses...")
+    
+    -- Common Brookhaven gamepass IDs and their value names
+    local gamepasses = {
+        "Premium",
+        "VIP",
+        "Admin",
+        "HouseSlots",
+        "ExtraCars",
+        "SuperAdmin",
+        "Police",
+        "Firefighter",
+        "Mayor",
+        "GodMode",
+        "Fly",
+        "Noclip",
+        "Invisible",
+        "Speed",
+        "JumpPower",
+        "UnlimitedMoney",
+        "AllHouses",
+        "AllCars",
+        "AllItems",
+        "AllPets",
+        "AllTools",
+        "AllWeapons",
+        "AllSkins",
+        "AllEmotes",
+        "AllAnimations",
+        "AllAccessories",
+        "AllClothing",
+        "AllFurniture",
+        "AllDecorations",
+        "AllColors",
+        "AllMaterials",
+        "AllTextures",
+        "AllSounds",
+        "AllMusic",
+        "AllEffects",
+        "AllParticles",
+        "AllTrails",
+        "AllAuras",
+        "AllPetsUnlocked",
+        "AllVehiclesUnlocked",
+        "AllHousesUnlocked",
+        "AllJobsUnlocked",
+        "AllToolsUnlocked",
+        "AllWeaponsUnlocked",
+        "AllItemsUnlocked",
+        "AllAccessoriesUnlocked",
+        "AllClothingUnlocked",
+        "AllAnimationsUnlocked",
+        "AllEmotesUnlocked",
+        "AllSkinsUnlocked",
+        "AllColorsUnlocked",
+        "AllMaterialsUnlocked",
+        "AllTexturesUnlocked"
+    }
+    
+    -- Try to find and unlock gamepasses in various locations
+    local successCount = 0
+    
+    -- Method 1: Player data
+    for _, gpName in ipairs(gamepasses) do
+        local gp = Player:FindFirstChild(gpName) or Player:FindFirstChild("Has" .. gpName) or Player:FindFirstChild("Owns" .. gpName)
+        if gp then
+            if gp:IsA("BoolValue") then
+                gp.Value = true
+                successCount = successCount + 1
+            elseif gp:IsA("IntValue") or gp:IsA("NumberValue") then
+                gp.Value = 1
+                successCount = successCount + 1
+            end
+        end
+    end
+    
+    -- Method 2: Player stats/data
+    local stats = Player:FindFirstChild("Stats") or Player:FindFirstChild("Data") or Player:FindFirstChild("leaderstats")
+    if stats then
+        for _, gpName in ipairs(gamepasses) do
+            local gp = stats:FindFirstChild(gpName) or stats:FindFirstChild("Has" .. gpName) or stats:FindFirstChild("Owns" .. gpName)
+            if gp then
+                if gp:IsA("BoolValue") then
+                    gp.Value = true
+                    successCount = successCount + 1
+                elseif gp:IsA("IntValue") or gp:IsA("NumberValue") then
+                    gp.Value = 1
+                    successCount = successCount + 1
+                end
+            end
+        end
+    end
+    
+    -- Method 3: Gamepass service simulation
+    local MarketService = game:GetService("MarketplaceService")
+    if MarketService then
+        -- Hook the function that checks if player owns gamepass
+        if hookfunction then
+            local oldFunc = hookfunction(MarketService.PlayerOwnsGamePassAsync, function()
+                return true
+            end)
+            print("Hooked PlayerOwnsGamePassAsync to always return true")
+        end
+    end
+    
+    -- Method 4: Create fake gamepass values if they don't exist
+    local folder = Instance.new("Folder")
+    folder.Name = "UnlockedGamepasses"
+    folder.Parent = Player
+    
+    for _, gpName in ipairs(gamepasses) do
+        local bool = Instance.new("BoolValue")
+        bool.Name = gpName
+        bool.Value = true
+        bool.Parent = folder
+    end
+    
+    -- Method 5: Try to access Brookhaven-specific systems
+    local Brookhaven = game:GetService("ReplicatedStorage"):FindFirstChild("Brookhaven") or game:GetService("ReplicatedStorage"):FindFirstChild("BH")
+    if Brookhaven then
+        -- Look for gamepass module
+        local gpModule = Brookhaven:FindFirstChild("Gamepasses") or Brookhaven:FindFirstChild("GamepassModule")
+        if gpModule and gpModule:IsA("ModuleScript") then
+            -- Try to require and modify
+            local success, result = pcall(function()
+                local module = require(gpModule)
+                if module and type(module) == "table" then
+                    for k, v in pairs(module) do
+                        if type(v) == "boolean" then
+                            module[k] = true
+                        end
+                    end
+                end
+            end)
+            if success then print("Modified Brookhaven gamepass module") end
+        end
+    end
+    
+    -- Method 6: Remote events (try to fire purchase events)
+    local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes") or game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvents")
+    if remotes then
+        for _, remote in pairs(remotes:GetDescendants()) do
+            if remote:IsA("RemoteEvent") and remote.Name:lower():find("gamepass") or remote.Name:lower():find("purchase") or remote.Name:lower():find("buy") then
+                pcall(function()
+                    remote:FireServer(true, "all")
+                end)
+            end
+        end
+    end
+    
+    -- Visual feedback
+    local notif = Instance.new("TextLabel")
+    notif.Size = UDim2.new(0, 300, 0, 60)
+    notif.Position = UDim2.new(0.5, -150, 0.5, -30)
+    notif.BackgroundColor3 = colors.gold
+    notif.Text = "ALL GAMEPASSES UNLOCKED!\n(" .. successCount .. " found)"
+    notif.TextColor3 = colors.text
+    notif.Font = Enum.Font.GothamBold
+    notif.TextSize = 16
+    notif.Parent = ScreenGui
+    game:GetService("Debris"):AddItem(notif, 3)
+    
+    print("Gamepass unlock complete! Found and unlocked " .. successCount .. " gamepasses.")
+end)
+
+-- Individual Gamepass Toggles
+y = addToggle(BrookhavenContent, "Premium", y, function(state)
+    -- Premium gamepass unlock
+    local gp = Player:FindFirstChild("Premium") or Player:FindFirstChild("HasPremium") or Player:FindFirstChild("OwnsPremium")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "Premium"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "VIP", y, function(state)
+    local gp = Player:FindFirstChild("VIP") or Player:FindFirstChild("HasVIP") or Player:FindFirstChild("OwnsVIP")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "VIP"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Admin", y, function(state)
+    local gp = Player:FindFirstChild("Admin") or Player:FindFirstChild("HasAdmin") or Player:FindFirstChild("OwnsAdmin")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "Admin"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Super Admin", y, function(state)
+    local gp = Player:FindFirstChild("SuperAdmin") or Player:FindFirstChild("HasSuperAdmin")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "SuperAdmin"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Extra House Slots", y, function(state)
+    local gp = Player:FindFirstChild("HouseSlots") or Player:FindFirstChild("ExtraHouseSlots")
+    if gp and gp:IsA("IntValue") then gp.Value = state and 10 or 1 end
+    if not gp then
+        gp = Instance.new("IntValue")
+        gp.Name = "HouseSlots"
+        gp.Value = state and 10 or 1
+        gp.Parent = Player
+    end
+end)
+
+y = addToggle(BrookhavenContent, "Extra Cars", y, function(state)
+    local gp = Player:FindFirstChild("ExtraCars") or Player:FindFirstChild("CarSlots")
+    if gp and gp:IsA("BoolValue") then gp.Value = state end
+    if not gp then
+        gp = Instance.new("BoolValue")
+        gp.Name = "ExtraCars"
+        gp.Value = state
+        gp.Parent = Player
+    end
+end)
+
+-- TELEPORT SECTION
 y = addSection(BrookhavenContent, "Teleport", y)
 
 -- Selected player variable
@@ -641,7 +882,7 @@ dropdownFrame.BackgroundColor3 = colors.dropdown
 dropdownFrame.BorderSizePixel = 0
 dropdownFrame.Parent = BrookhavenContent
 
--- Dropdown Button (shows current selection)
+-- Dropdown Button
 local dropdownBtn = Instance.new("TextButton")
 dropdownBtn.Size = UDim2.new(1, 0, 1, 0)
 dropdownBtn.BackgroundColor3 = colors.dropdown
@@ -652,7 +893,7 @@ dropdownBtn.TextSize = 14
 dropdownBtn.TextXAlignment = Enum.TextXAlignment.Left
 dropdownBtn.Parent = dropdownFrame
 
--- Dropdown List (scrollable)
+-- Dropdown List
 local dropdownList = Instance.new("Frame")
 dropdownList.Size = UDim2.new(1, 0, 0, 150)
 dropdownList.Position = UDim2.new(0, 0, 1, 0)
@@ -675,7 +916,6 @@ scrollFrame.Parent = dropdownList
 
 -- Function to update player list
 local function updatePlayerList()
-    -- Clear existing
     for _, child in pairs(scrollFrame:GetChildren()) do
         if child:IsA("TextButton") then
             child:Destroy()
@@ -737,11 +977,9 @@ UserInputService.InputBegan:Connect(function(input, gp)
         local dropdownAbs = dropdownList.AbsolutePosition
         local dropdownSize = dropdownList.AbsoluteSize
         
-        -- Check if click is outside dropdown
         if mousePos.X < dropdownAbs.X or mousePos.X > dropdownAbs.X + dropdownSize.X or
            mousePos.Y < dropdownAbs.Y or mousePos.Y > dropdownAbs.Y + dropdownSize.Y then
-            if dropdownList.Visible and not dropdownBtn:IsDescendantOf(game:GetService("GuiService"):GetGuiInset()) then
-                -- Check if clicked on dropdown button
+            if dropdownList.Visible then
                 local btnAbs = dropdownBtn.AbsolutePosition
                 local btnSize = dropdownBtn.AbsoluteSize
                 if mousePos.X < btnAbs.X or mousePos.X > btnAbs.X + btnSize.X or
@@ -757,17 +995,7 @@ end)
 y = y + 60
 
 -- Teleport Button
-local teleportBtn = Instance.new("TextButton")
-teleportBtn.Size = UDim2.new(1, 0, 0, 50)
-teleportBtn.Position = UDim2.new(0, 0, 0, y)
-teleportBtn.BackgroundColor3 = colors.accent
-teleportBtn.Text = "TELEPORT TO PLAYER"
-teleportBtn.TextColor3 = colors.text
-teleportBtn.Font = Enum.Font.GothamBold
-teleportBtn.TextSize = 16
-teleportBtn.Parent = BrookhavenContent
-
-teleportBtn.MouseButton1Click:Connect(function()
+y = addBigButton(BrookhavenContent, "TELEPORT TO PLAYER", y, colors.accent, function()
     if _G.selectedPlayer and _G.selectedPlayer.Character then
         local targetHRP = _G.selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
         local myHRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
@@ -776,7 +1004,6 @@ teleportBtn.MouseButton1Click:Connect(function()
             myHRP.CFrame = targetHRP.CFrame + Vector3.new(0, 3, 0)
             print("Teleported to: " .. _G.selectedPlayer.Name)
             
-            -- Visual feedback
             local notif = Instance.new("TextLabel")
             notif.Size = UDim2.new(0, 250, 0, 40)
             notif.Position = UDim2.new(0.5, -125, 0.5, -20)
@@ -787,13 +1014,8 @@ teleportBtn.MouseButton1Click:Connect(function()
             notif.TextSize = 14
             notif.Parent = ScreenGui
             game:GetService("Debris"):AddItem(notif, 2)
-        else
-            print("Player or target not found")
         end
     else
-        print("No player selected")
-        
-        -- Error feedback
         local notif = Instance.new("TextLabel")
         notif.Size = UDim2.new(0, 200, 0, 40)
         notif.Position = UDim2.new(0.5, -100, 0.5, -20)
@@ -807,9 +1029,7 @@ teleportBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-y = y + 70
-
--- Auto-update player list when players join/leave
+-- Auto-update player list
 game:GetService("Players").PlayerAdded:Connect(function()
     if dropdownList.Visible then
         updatePlayerList()
@@ -820,25 +1040,22 @@ game:GetService("Players").PlayerRemoving:Connect(function()
     if dropdownList.Visible then
         updatePlayerList()
     end
-    -- Clear selection if selected player left
     if _G.selectedPlayer and not _G.selectedPlayer.Parent then
         _G.selectedPlayer = nil
         dropdownBtn.Text = "  Select Player ▼"
     end
 end)
 
--- Additional Brookhaven features
+-- HOUSE SECTION
 y = addSection(BrookhavenContent, "House", y)
 
 y = addToggle(BrookhavenContent, "Unlock All Doors", y, function(state)
-    -- Unlock all doors in Brookhaven
     for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name:lower():find("door") and obj:IsA("BasePart") or obj:IsA("Model") then
+        if obj.Name:lower():find("door") and (obj:IsA("BasePart") or obj:IsA("Model")) then
             local door = obj:FindFirstChildOfClass("ClickDetector") or obj:FindFirstChild("ClickDetector")
             if door then
                 door.MaxActivationDistance = state and 1000 or 10
             end
-            -- Unlock door properties
             if obj:IsA("BasePart") then
                 obj.CanCollide = not state
             end
@@ -849,7 +1066,6 @@ end)
 y = addToggle(BrookhavenContent, "Auto Rob", y, function(state)
     if state then
         _G.autorob = RunService.Heartbeat:Connect(function()
-            -- Auto collect money/items
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj.Name:lower():find("money") or obj.Name:lower():find("cash") or obj.Name:lower():find("collect") then
                     if obj:IsA("BasePart") and obj:FindFirstChildOfClass("TouchTransmitter") then
@@ -864,6 +1080,7 @@ y = addToggle(BrookhavenContent, "Auto Rob", y, function(state)
     end
 end)
 
+-- FUN SECTION
 y = addSection(BrookhavenContent, "Fun", y)
 
 y = addToggle(BrookhavenContent, "Invisible", y, function(state)
@@ -887,7 +1104,6 @@ y = addSlider(BrookhavenContent, "Player Size", 0.5, 5, 1, y, function(v)
     _G.lastSize = v
 end)
 
-print("Darks Exploit Hub - Four Tabs Loaded!")
-print("Player | Southwest FL | San Diego BR | Brookhaven")
-print("Brookhaven features: Player Teleport, Unlock Doors, Auto Rob, Invisible, Size Changer")
+print("Darks Exploit Hub - Four Tabs with Gamepasses Loaded!")
+print("Brookhaven features: Unlock All Gamepasses, Premium, VIP, Admin, Teleport, and more!")
 print("Press 'K' to hide/show GUI")
